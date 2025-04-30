@@ -36,15 +36,17 @@ void putchar(char ch){
 }
 
 void kernel_main(void){
-  // // .bss領域を0で初期化する
-  // memset(__bss, 0, (size_t)__bss_end - (size_t)__bss);
+  // .bss領域を0で初期化する
+  memset(__bss, 0, (size_t)__bss_end - (size_t)__bss);
   // for(;;);
   // const char *s = "\n\nHello world!\n";
   // for(int i = 0; s[i] != '\0'; i++){
   //   putchar(s[i]);
   // }
-  printf("\n\nHello %s\n", "world!");
-  printf("1 + 2 = %d, %x", 1+2, 0x1234abcd);
+  // printf("\n\nHello %s\n", "world!");
+  // printf("1 + 2 = %d, %x", 1+2, 0x1234abcd);
+  PANIC("booted!");
+  printf("unreachable here!\n");
   for(;;) __asm__ __volatile__("wfi");
 }
 
