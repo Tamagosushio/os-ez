@@ -8,6 +8,16 @@ typedef uint32_t size_t;
 // リンカスクリプト内で定義されている各シンボルを宣言
 // 領域の先頭アドレスを返すように配列
 extern char __bss[], __bss_end[], __stack_top[];
+extern char __free_ram[], __free_ram_end[];
+
+paddr_t alloc_pages(uint32_t n){
+  static paddr_t next_paddr = (paddr_t)__free_ram; // 次に割り当てられる領域の先頭アドレス
+  paddr_t paddr = next_paddr;
+  next_paddr += n * PAGE_SIZE;
+  if(next_paddr > (paddr_t)__free_ram_end) PANIC("out of memory");
+  memset((void *)paddr, 0, n * PAGE_SIZE); // 割り当てたメモリ領域を0で初期化
+  return paddr;
+}
 
 // OpenSBIの呼び出し
 struct sbiret sbi_call(long arg0, long arg1, long arg2, long arg3, long arg4, long arg5, long fid, long eid){
@@ -130,7 +140,12 @@ void kernel_main(void){
   // }
   // printf("\n\nHello %s\n", "world!");
   // printf("1 + 2 = %d, %x", 1+2, 0x1234abcd);
-  WRITE_CSR(stvec, (uint32_t)kernel_entry);
+  // WRITE_CSR(stvec, (uint32_t)kernel_entry);
+  paddr_t paddr0 = alloc_pages(2);
+  paddr_t paddr1 = alloc_pages(1);
+  printf("alloc_pages test: paddr0=%x\n", paddr0);
+  printf("alloc_pages test: paddr1=%x\n", paddr1);
+  PANIC("booted!");
   __asm__ __volatile__("unimp");
 }
 

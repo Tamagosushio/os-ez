@@ -12,6 +12,7 @@ typedef uint32_t vaddr_t; // 仮想メモリアドレスを表す型
 #define true 1
 #define false 0
 #define NULL ((void *)0)
+#define PAGE_SIZE 4096
 #define align_up(value, align) __buildin_align_up(value, align) // valueをalign(2のべき乗)に切り上げ
 #define is_aligned(value, align) __buildin_is_aligned(vlaue, align) // valueがalign(2のべき乗)の倍数か判定
 #define offsetof(type, member) __buildin_offsetof(type, member) // メンバが構造体の先頭から何バイト目にあるかを返す
