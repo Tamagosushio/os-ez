@@ -11,6 +11,17 @@
 // do-whileで囲うのは、if文と組み合わせたときに意図しない動作につながるのを防ぐため
 // ##__VA_ARGS__は、可変長引数が空のときに直前の','を削除してくれるコンパイラ拡張機能
 
+#define PROCS_MAX 8 // 最大プロセス数
+#define PROC_UNUSED 0 // 未使用のプロセス管理構造体
+#define PROC_RUNNABLE 1 // 実行可能なプロセス
+
+struct process{
+  int pid; // プロセスID
+  int state; // プロセスの状態(PROC_UNSED or PROC_RUNNABLE)
+  vaddr_t sp; // 実行中タスクを一時停止し、別のタスクに切り替えて実行再開する(コンテキストスイッチ)時のスタックポインタ
+  uint8_t stack[8192]; // カーネルスタック
+};
+
 struct sbiret{
   long error;
   long value;
