@@ -11,9 +11,15 @@ CC=clang
 # -Wl,-Tkernel.ld -> リンカスクリプトを指定
 # -Wl,-Map=kernel.map -> マップファイル(リンカによる配置結果)を出力
 CFLAGS="-std=c11 -O2 -g3 -Wall -Wextra --target=riscv32-unknown-elf -fno-stack-protector -ffreestanding -nostdlib"
+
+OBJCOPY=/usr/bin/llvm-objcopy
+# シェルをビルド
+$CC $CFLAGS -Wl,-Tuser.ld -Wl,-Map=shell.map -o shell.elf shell.c user.c common.c
+$OBJCOPY --set-section-flags .bss=alloc,contents -O binary shell.elf shell.bin # ビルドした実行ファイルを生バイナリに変換
+$OBJCOPY -Ibinary -Oelf32-littleriscv shell.bin shell.bin.o # 生バイナリの実行イメージをC言語に埋め込める形式に変換
 # カーネルをビルド
 $CC $CFLAGS -Wl,-Tkernel.ld -Wl,-Map=kernel.map -o kernel.elf \
-  kernel.c common.c
+  kernel.c common.c shell.bin.o
 # -machine virt -> 仮想マシンとして起動
 # -bios default -> デフォルトBIOS(OpenSBI)を使用
 # -nographic -> QEMUをウィンドウなしで起動
